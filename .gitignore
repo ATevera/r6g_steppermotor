@@ -1,2 +1,3 @@
 .vscode/
 Microcontroladores/BootEsp32/.vscode/
+datapoints/poses.csv
