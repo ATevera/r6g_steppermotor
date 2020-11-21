@@ -6,7 +6,11 @@ import rospy
 import math
 from sensor_msgs.msg import JointState
 
-pathCSV = 'src/csvfiles/joints_values.csv'
+import sys
+
+pathCSV = sys.argv[1]
+#pathCSV = 'src/csvfiles/joints_values.csv'
+print(pathCSV)
 
 def InitCSVFile():
 	with open(pathCSV, 'w') as csvfile:
@@ -30,7 +34,7 @@ def VerificarUltimoEstado(position):
 def toCSV(data):
 	"""Enviar ángulos a archivo CSV para su próxima lectura y envío mediante el puerto serial"""
 	if not (VerificarUltimoEstado(data.position)):
-		print("Escribiendo nueva pose para el robot en archivo CSV ... ")
+		rospy.loginfo("Trayectoria: %s","Escribiendo nueva pose para el robot en archivo CSV ... ")
 		estado = ""
 		rowValues = np.array([])
 		for angulo in data.position:
@@ -38,7 +42,7 @@ def toCSV(data):
 			estado += "{}, ".format(angulo)
 			rowValues = np.append(rowValues,'{}'.format(angulo))
 		rowValues = np.append(rowValues,'0')		
-		with open(pathCSV, 'w') as csvfile:
+		with open(pathCSV, 'a') as csvfile:
 			writer = csv.writer(csvfile, delimiter = ',', quotechar = '|', quoting = csv.QUOTE_MINIMAL)
 			writer.writerow(rowValues)
 	

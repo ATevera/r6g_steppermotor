@@ -1,8 +1,7 @@
 #! /usr/bin/env python3
 import rospy
 from r6g_steppermotor.msg import CurrentPose
-
-import serial, time
+import serial, time, sys
 
 def SendData(name, target):
 	"""Envío de datos por el puerto serial con estructura JSON"""
@@ -29,7 +28,7 @@ def ToJSONFile(robot):
 	target += "}"
 	PosName = "Position"
 	if not comparative:
-		print(estado)
+		rospy.loginfo("SerialSending: %s",estado)
 		SendData(PosName,target)
 
 def SerialSending():
@@ -40,8 +39,8 @@ def SerialSending():
 	rospy.spin()
 
 #Inicialización del puerto serie
-port = '/dev/ttyUSB0'
-#port = 'COM4'
+port = sys.argv[1]
+
 esp32 = serial.Serial(port, 115200)
 esp32.setDTR = False
 print('Puerto serial iniciado en {}'.format(port))
