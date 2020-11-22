@@ -1,8 +1,9 @@
 <launch>
     <arg name = "csvpath" default = "$(find r6g_steppermotor)/datapoints/poses.csv" />
     <arg name = "port" default = "/dev/ttyUSB0" />
+    <arg name = "delay" default = "2.0" />
 
     <node name = "Trayectoria" pkg = "r6g_steppermotor" type = "Trayectoria.py" args = "$(arg csvpath)" output = "screen" />
-    <node name = "ReadCSV" pkg = "r6g_steppermotor" type = "ReadCSV.py" args = "$(arg csvpath)" output = "screen" />
-    <node name = "SerialSending" pkg = "r6g_steppermotor" type = "SerialSending.py" args = "$(arg port)" output = "screen" /> 
+    <node name = "ReadCSV" pkg = "r6g_steppermotor" type = "ReadCSV.py" args = "$(arg csvpath)" output = "screen" launch-prefix = "bash -c 'sleep $(arg delay); $0 $@' "/>
+    <!-- <node name = "SerialSending" pkg = "r6g_steppermotor" type = "SerialSending.py" args = "$(arg port)" output = "screen" />  -->
 </launch>
