@@ -22,7 +22,7 @@ def readCSV():
 	"""Inicialización de nodo y construcción de tipo de mensaje"""
 	rospy.init_node('ReadCSV',anonymous = True)
 	pub = rospy.Publisher('CurrentPose', CurrentPose, queue_size = 100)
-	rate = rospy.Rate(10) #Frecuencia de publicación
+	rate = rospy.Rate(5) #Frecuencia de publicación
 	r6g = CurrentPose()
 	r6g.position = [0]*6
 	r6g.name = ['Joint1', 'Joint2', 'Joint3', 'Joint4', 'Joint5', 'Joint6']
@@ -34,6 +34,8 @@ def readCSV():
 		if sizeCSV == lineas and lineas != 2 and recurrencia == 0: 
 			pub.publish(r6g)
 			recurrencia += 1
+			with open(pathCSV, 'w') as csvfile:
+				writer = csv.writer(csvfile, delimiter = ',', quotechar = '|', quoting = csv.QUOTE_MINIMAL)
 		if sizeCSV == lineas:
 			recurrencia = 2
 		else: 
