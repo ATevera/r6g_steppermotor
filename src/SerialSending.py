@@ -5,8 +5,11 @@ import serial, time, sys
 
 def SendData(name, target):
 	"""Envío de datos por el puerto serial con estructura JSON"""
-	if esp32.readable():
-		esp32.write(target.encode())
+	i = 0
+	while not esp32.readable():
+		i += 1
+	rospy.loginfo("SerialSending: %s", target)
+	esp32.write(target.encode())
 
 def ToJSONFile(robot):
 	"""Construcción del mensaje en formato JSON"""
@@ -28,7 +31,6 @@ def ToJSONFile(robot):
 	target += "}"
 	PosName = "Position"
 	if not comparative:
-		rospy.loginfo("SerialSending: %s",estado)
 		SendData(PosName,target)
 
 def SerialSending():
@@ -42,7 +44,7 @@ def SerialSending():
 port = sys.argv[1]
 
 esp32 = serial.Serial(port, 115200)
-esp32.setDTR = False
+esp32.setDTR = True
 print('Puerto serial iniciado en {}'.format(port))
 valuesDoF = [0, -71, 75, 0, 0, 0]
 
