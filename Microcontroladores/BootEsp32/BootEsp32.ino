@@ -57,7 +57,7 @@ void setup()
   DoF1.SetPositiveTurn(LOW);
   DoF2.SetPositiveTurn(LOW);
   DoF3.SetPositiveTurn(HIGH);
-  DoF4.SetPositiveTurn(HIGH);
+  DoF4.SetPositiveTurn(LOW);
   DoF5.SetPositiveTurn(LOW);
   DoF6.SetPositiveTurn(HIGH);
 
