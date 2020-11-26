@@ -1,4 +1,6 @@
-from cv2 import cv2 as cv
+#!/usr/bin/env python3
+
+import cv2 as cv
 import numpy as np
 
 #iniciar camara 
@@ -9,28 +11,28 @@ def nothing(val):
     pass
 
 cv.namedWindow('Color a detectar minimos')
-cv.createTrackbar('Hue Min','Color a detectar minimos',0,179,nothing)
+cv.createTrackbar('Hue Min','Color a detectar minimos',0,360,nothing)
 cv.createTrackbar('Saturación Min','Color a detectar minimos',0,255,nothing)
 cv.createTrackbar('Valor Min','Color a detectar minimos',0,255,nothing)
 cv.createTrackbar('Area','Color a detectar minimos',0,10000,nothing)
 cv.createTrackbar('Blur','Color a detectar minimos',1,50,nothing)
 
 cv.namedWindow('Color a detectar maximos')
-cv.createTrackbar('Hue Max','Color a detectar maximos',0,179,nothing)
+cv.createTrackbar('Hue Max','Color a detectar maximos',0,360,nothing)
 cv.createTrackbar('Saturación Max','Color a detectar maximos',0,255,nothing)
 cv.createTrackbar('Valor Max','Color a detectar maximos',0,255,nothing)
 
 #set con la detección en color azul
-cv.setTrackbarPos('Hue Min','Color a detectar minimos',5)
-cv.setTrackbarPos('Hue Max','Color a detectar maximos',22)
-cv.setTrackbarPos('Saturación Min','Color a detectar minimos',100)
+cv.setTrackbarPos('Hue Min','Color a detectar minimos',80)
+cv.setTrackbarPos('Hue Max','Color a detectar maximos',119)
+cv.setTrackbarPos('Saturación Min','Color a detectar minimos',61)
 cv.setTrackbarPos('Saturación Max','Color a detectar maximos',255)
-cv.setTrackbarPos('Valor Min','Color a detectar minimos',100)
+cv.setTrackbarPos('Valor Min','Color a detectar minimos',99)
 cv.setTrackbarPos('Valor Max','Color a detectar maximos',255)
-cv.setTrackbarPos('Area','Color a detectar minimos',1000)
-cv.setTrackbarPos('Blur','Color a detectar minimos',50)
+cv.setTrackbarPos('Area','Color a detectar minimos',400)
+cv.setTrackbarPos('Blur','Color a detectar minimos',30)
 
-#creando dos imagenes de 100x300 pixeles con tres canales(RGB)
+#creando dos imagenes de 100x300 pixeles con tres canales(BGR)
 img1 =np.zeros((100,300,3), np.uint8)
 img2 =np.zeros((100,300,3), np.uint8)
 img1_hsv = cv.cvtColor(img1, cv.COLOR_BGR2HSV)
