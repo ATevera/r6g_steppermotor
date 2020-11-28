@@ -9,6 +9,40 @@ from r6g_steppermotor.msg import Coordenadas
 def nothing(val):
     pass
 
+def makeTrackBars():
+	cv.namedWindow('Color a detectar minimos')
+	cv.createTrackbar('Hue Min','Color a detectar minimos',0,360,nothing)
+	cv.createTrackbar('Saturación Min','Color a detectar minimos',0,255,nothing)
+	cv.createTrackbar('Valor Min','Color a detectar minimos',0,255,nothing)
+	cv.createTrackbar('Area','Color a detectar minimos',0,10000,nothing)
+	cv.createTrackbar('Blur','Color a detectar minimos',1,50,nothing)
+
+	cv.namedWindow('Color a detectar maximos')
+	cv.createTrackbar('Hue Max','Color a detectar maximos',0,360,nothing)
+	cv.createTrackbar('Saturación Max','Color a detectar maximos',0,255,nothing)
+	cv.createTrackbar('Valor Max','Color a detectar maximos',0,255,nothing)
+
+	#set con la detección en color
+	cv.setTrackbarPos('Hue Min','Color a detectar minimos',80)
+	cv.setTrackbarPos('Hue Max','Color a detectar maximos',119)
+	cv.setTrackbarPos('Saturación Min','Color a detectar minimos',61)
+	cv.setTrackbarPos('Saturación Max','Color a detectar maximos',255)
+	cv.setTrackbarPos('Valor Min','Color a detectar minimos',99)
+	cv.setTrackbarPos('Valor Max','Color a detectar maximos',255)
+	cv.setTrackbarPos('Area','Color a detectar minimos',400)
+	cv.setTrackbarPos('Blur','Color a detectar minimos',30)
+
+def readTrackBars():
+	h = cv.getTrackbarPos('Hue Min','Color a detectar minimos')
+	s = cv.getTrackbarPos('Saturación Min','Color a detectar minimos')
+	v = cv.getTrackbarPos('Valor Min','Color a detectar minimos')
+	a = cv.getTrackbarPos('Area','Color a detectar minimos')
+	b = cv.getTrackbarPos('Blur','Color a detectar minimos')
+	H = cv.getTrackbarPos('Hue Max','Color a detectar maximos')
+	S = cv.getTrackbarPos('Saturación Max','Color a detectar maximos')
+	V = cv.getTrackbarPos('Valor Max','Color a detectar maximos')
+	return h, s, v, H, S, V, a, b
+
 def ordenar_puntos(puntos):
 	n_puntos = np.concatenate([puntos[0], puntos[1], puntos[2], puntos[3]]).tolist()
 	y_order = sorted(n_puntos, key = lambda n_puntos: n_puntos[1])
@@ -36,29 +70,6 @@ def roi(image, ancho, alto):
 			imagen_alineada = cv.warpPerspective(image, M, (ancho,alto))
 	return imagen_alineada
 
-
-cv.namedWindow('Color a detectar minimos')
-cv.createTrackbar('Hue Min','Color a detectar minimos',0,360,nothing)
-cv.createTrackbar('Saturación Min','Color a detectar minimos',0,255,nothing)
-cv.createTrackbar('Valor Min','Color a detectar minimos',0,255,nothing)
-cv.createTrackbar('Area','Color a detectar minimos',0,10000,nothing)
-cv.createTrackbar('Blur','Color a detectar minimos',1,50,nothing)
-
-cv.namedWindow('Color a detectar maximos')
-cv.createTrackbar('Hue Max','Color a detectar maximos',0,360,nothing)
-cv.createTrackbar('Saturación Max','Color a detectar maximos',0,255,nothing)
-cv.createTrackbar('Valor Max','Color a detectar maximos',0,255,nothing)
-
-#set con la detección en color
-cv.setTrackbarPos('Hue Min','Color a detectar minimos',80)
-cv.setTrackbarPos('Hue Max','Color a detectar maximos',119)
-cv.setTrackbarPos('Saturación Min','Color a detectar minimos',61)
-cv.setTrackbarPos('Saturación Max','Color a detectar maximos',255)
-cv.setTrackbarPos('Valor Min','Color a detectar minimos',99)
-cv.setTrackbarPos('Valor Max','Color a detectar maximos',255)
-cv.setTrackbarPos('Area','Color a detectar minimos',400)
-cv.setTrackbarPos('Blur','Color a detectar minimos',30)
-
 #creando dos imagenes de 100x300 pixeles con tres canales(BGR)
 img1 = np.zeros((100,300,3), np.uint8)
 img2 = np.zeros((100,300,3), np.uint8)
@@ -78,22 +89,23 @@ def Detector():
 	pieza = Coordenadas()
 	#iniciar camara
 	cap = cv.VideoCapture(0)
+	#makeTrackBars()
+
 	while not rospy.is_shutdown():
 		ret, frame = cap.read()
 		#guardando la posición de los trackbars en variables
-		hl = cv.getTrackbarPos('Hue Min','Color a detectar minimos')
-		sl = cv.getTrackbarPos('Saturación Min','Color a detectar minimos')
-		vl = cv.getTrackbarPos('Valor Min','Color a detectar minimos')
-		a = cv.getTrackbarPos('Area','Color a detectar minimos')
-		blur = cv.getTrackbarPos('Blur','Color a detectar minimos')
-		hh = cv.getTrackbarPos('Hue Max','Color a detectar maximos')
-		sh = cv.getTrackbarPos('Saturación Max','Color a detectar maximos')
-		vh = cv.getTrackbarPos('Valor Max','Color a detectar maximos')
+		#hl, sl, vl, hh, sh, vh, a, blur = readTrackBars()
+		hl, sl, vl = 80, 61, 99
+		hh, sh, vh = 119, 255, 255
+		a = 300
+		blur = 30
 		#creando imagenes con la posición de los trackbars
+		"""
 		img1_hsv[:] = [hl,sl,vl]
 		img2_hsv[:] = [hh,sh,vh]
 		img1 = cv.cvtColor(img1_hsv, cv.COLOR_HSV2BGR)
 		img2 = cv.cvtColor(img2_hsv, cv.COLOR_HSV2BGR)
+		"""
 		#Creación de los array con los limites HSV obtenidos de los trackbars
 		rango_l = np.array([hl,sl,vl])
 		rango_h = np.array([hh,sh,vh])
@@ -133,8 +145,8 @@ def Detector():
 			cv.imshow('Real',masksalida)
 			cv.imshow('Mask',mask)
 		cv.imshow('frame', frame)
-		cv.imshow('Color a detectar minimos',img1)
-		cv.imshow('Color a detectar maximos',img2)
+		#cv.imshow('Color a detectar minimos',img1)
+		#cv.imshow('Color a detectar maximos',img2)
 	cap.release()
 	cv.destroyAllWindows()    
 
