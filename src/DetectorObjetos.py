@@ -76,8 +76,8 @@ img2 = np.zeros((100,300,3), np.uint8)
 img1_hsv = cv.cvtColor(img1, cv.COLOR_BGR2HSV)
 img2_hsv = cv.cvtColor(img2, cv.COLOR_BGR2HSV)
 
-workspace = [147, 135] #Dimensiones en mm en x,y (alto, ancho)
-aspect_ratio = workspace[1]/workspace[0] #ratio = ancho/alto
+workspace = [245, 80] #Dimensiones en mm en y,x (ancho, alto)
+aspect_ratio = workspace[0]/workspace[1] #ratio = ancho/alto
 perspectiva_y = 720
 perspectiva_x = int(perspectiva_y/aspect_ratio)
 
@@ -89,28 +89,26 @@ def Detector():
 	pieza = Coordenadas()
 	#iniciar camara
 	cap = cv.VideoCapture(0)
-	#makeTrackBars()
+	makeTrackBars()
 
 	while not rospy.is_shutdown():
 		ret, frame = cap.read()
 		#guardando la posición de los trackbars en variables
-		#hl, sl, vl, hh, sh, vh, a, blur = readTrackBars()
-		hl, sl, vl = 80, 61, 99
-		hh, sh, vh = 119, 255, 255
-		a = 300
-		blur = 30
+		hl, sl, vl, hh, sh, vh, a, blur = readTrackBars()
+
 		#creando imagenes con la posición de los trackbars
-		"""
 		img1_hsv[:] = [hl,sl,vl]
 		img2_hsv[:] = [hh,sh,vh]
 		img1 = cv.cvtColor(img1_hsv, cv.COLOR_HSV2BGR)
 		img2 = cv.cvtColor(img2_hsv, cv.COLOR_HSV2BGR)
-		"""
+
 		#Creación de los array con los limites HSV obtenidos de los trackbars
 		rango_l = np.array([hl,sl,vl])
 		rango_h = np.array([hh,sh,vh])
+
 		#Proceso de transferencia de Perspectiva
 		enfoque_ws = roi(frame, ancho = perspectiva_y, alto = perspectiva_x)
+
 		if enfoque_ws is not None:
 			framehsv = cv.cvtColor(enfoque_ws, cv.COLOR_BGR2HSV)
 			mask = cv.inRange(framehsv,rango_l,rango_h)
@@ -133,8 +131,8 @@ def Detector():
 					x = int(M["m10"]/M["m00"])
 					y = int(M['m01']/M['m00'])
 					#Coordenada relativa en mm, intercambio de coordanadas para coincidencia con el marco de referencia del robot.
-					y_mm = int(x * workspace[0]/perspectiva_x)
-					x_mm = int(y * workspace[1]/perspectiva_y)
+					y_mm = int(x * workspace[1]/perspectiva_x)
+					x_mm = int(y * workspace[0]/perspectiva_y)
 					cv.circle(masksalida, (x,y), 7, (0,255,0), -1)
 					font = cv.FONT_HERSHEY_SIMPLEX
 					cv.putText(masksalida, '{},{}'.format(x_mm,y_mm),(x+30,y+30), font, 0.75,(0,255,0),1,cv.LINE_AA)
@@ -146,8 +144,8 @@ def Detector():
 			cv.imshow('Mask',mask)
 		cv.imshow('frame', frame)
 		if cv.waitKey(1) & 0xFF == ord('q') : break
-		#cv.imshow('Color a detectar minimos',img1)
-		#cv.imshow('Color a detectar maximos',img2)
+		cv.imshow('Color a detectar minimos',img1)
+		cv.imshow('Color a detectar maximos',img2)
 	cap.release()
 	cv.destroyAllWindows()    
 
