@@ -1,0 +1,8 @@
+<launch>
+    <arg name = "port" default = "/dev/ttyUSB0" />
+    <arg name = "delaySerial" default = "5.0" />
+
+    <node name = "SerialSending" pkg = "r6g_steppermotor" type = "SerialSending.py" args = "$(arg port)" output = "screen" launch-prefix = "bash -c 'sleep $(arg delaySerial); $0 $@'" />
+    <node name = "Detector" pkg = "r6g_steppermotor" type = "DetectorObjetos.py" output = "screen" />
+    <node name = "StepControl" pkg = "r6g_steppermotor" type = "StepControl.py" output = "screen" />
+</launch>
