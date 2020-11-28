@@ -66,7 +66,7 @@ void setup()
   DoF2.SetSoftwareLimits(-60,100);
   DoF3.SetSoftwareLimits(-70,60);
   DoF4.SetSoftwareLimits(-70,70);
-  DoF5.SetSoftwareLimits(-10,90); 
+  DoF5.SetSoftwareLimits(-10,100); 
   DoF6.SetSoftwareLimits(-90,90);
 
   //Configuración de posiciones de inicio. 
