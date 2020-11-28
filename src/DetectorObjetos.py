@@ -145,6 +145,7 @@ def Detector():
 			cv.imshow('Real',masksalida)
 			cv.imshow('Mask',mask)
 		cv.imshow('frame', frame)
+		if cv.waitKey(1) & 0xFF == ord('q') : break
 		#cv.imshow('Color a detectar minimos',img1)
 		#cv.imshow('Color a detectar maximos',img2)
 	cap.release()
