@@ -37,7 +37,7 @@ class PointData:
 				verificador = float(tempPose[i]) == Target[i] and verificador
 		return verificador
 
-	def WatchLast(self, position):
+	def Compare(self, position):
 		"""Verificar el último estado del robot en el archivo CSV para evitar sobreecribir datos"""
 		actualPose = []
 		with open(self.path, newline = '') as csvfile:

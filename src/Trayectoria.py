@@ -7,7 +7,7 @@ from r6gPoints import PointData
 
 def toCSV(data):
 	"""Enviar ángulos a archivo CSV para su próxima lectura y envío mediante el puerto serial"""
-	if not (pose.WatchLast(data.position)):
+	if not (pose.Compare(data.position)):
 		#rospy.loginfo("Trayectoria: %s","Escribiendo nueva pose para el robot en archivo CSV ... ")
 		estado = ""
 		rowValues = np.array([])
