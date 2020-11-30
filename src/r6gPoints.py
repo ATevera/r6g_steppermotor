@@ -38,7 +38,7 @@ class PointData:
 		return verificador
 
 	def Compare(self, position):
-		"""Verificar el último estado del robot en el archivo CSV para evitar sobreecribir datos"""
+		"""Compara el último estado del robot con el archivo CSV para evitar sobreecribir datos"""
 		actualPose = []
 		with open(self.path, newline = '') as csvfile:
 			verificador = csv.reader(csvfile, delimiter = ',', quotechar = '|')
