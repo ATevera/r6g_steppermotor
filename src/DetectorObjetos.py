@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import rospy
+import rospy, sys
 import cv2 as cv
 import numpy as np
 from r6g_steppermotor.msg import Coordenadas
+from r6gPoints import PointData
 
 
 #creación de trackbars
@@ -90,26 +91,25 @@ def Detector():
 	#iniciar camara
 	cap = cv.VideoCapture(0)
 	makeTrackBars()
+	pose = PointData(sys.argv[1])
+	pose_revision = [0.0, 0.0, 0.0, 0.0, 90.0, 0.0]
 
 	while not rospy.is_shutdown():
 		ret, frame = cap.read()
 		#guardando la posición de los trackbars en variables
 		hl, sl, vl, hh, sh, vh, a, blur = readTrackBars()
-
 		#creando imagenes con la posición de los trackbars
 		img1_hsv[:] = [hl,sl,vl]
 		img2_hsv[:] = [hh,sh,vh]
 		img1 = cv.cvtColor(img1_hsv, cv.COLOR_HSV2BGR)
 		img2 = cv.cvtColor(img2_hsv, cv.COLOR_HSV2BGR)
-
 		#Creación de los array con los limites HSV obtenidos de los trackbars
 		rango_l = np.array([hl,sl,vl])
 		rango_h = np.array([hh,sh,vh])
-
 		#Proceso de transferencia de Perspectiva
 		enfoque_ws = roi(frame, ancho = perspectiva_y, alto = perspectiva_x)
 
-		if enfoque_ws is not None:
+		if enfoque_ws is not None and pose.Checking(pose_revision, 2.0):
 			framehsv = cv.cvtColor(enfoque_ws, cv.COLOR_BGR2HSV)
 			mask = cv.inRange(framehsv,rango_l,rango_h)
 			blur = 2*blur +1
