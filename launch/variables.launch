@@ -1,6 +1,0 @@
-<launch>
-    <arg name = "csvpath" default = "$(find r6g_steppermotor)/datapoints/poses.csv" />
-    <arg name = "port" default = "/dev/ttyUSB0" />
-    <arg name = "delay" default = "2.0" />
-    <arg name = "delaySerial" default = "5.0" />
-</launch>
