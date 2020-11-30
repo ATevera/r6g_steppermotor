@@ -6,10 +6,6 @@ class PointData:
 	def __init__(self, path):
 		self.path = path
 
-	def Clean(self):
-		with open(self.path, 'w') as csvfile:
-			writer = csv.writer(csvfile, delimiter = ',', quotechar = '|', quoting = csv.QUOTE_MINIMAL)
-
 	def Remake(self):
 		with open(self.path, 'w') as csvfile:
 			writer = csv.writer(csvfile, delimiter = ',', quotechar = '|', quoting = csv.QUOTE_MINIMAL)
