@@ -25,7 +25,7 @@ class PointData:
 			index = 0
 		return LastPose, int(tempPose[-1]), rows
 
-	def Current(self, Target):
+	def Checking(self, Target, tol):
 		"""Verifica que la pose sea la correcta para aplicar visión artificial"""
 		tempPose = [0]*6
 		verificador = True
@@ -34,7 +34,9 @@ class PointData:
 			for pose in lector:
 				tempPose = pose
 			for i in range(6):
-				verificador = float(tempPose[i]) == Target[i] and verificador
+				uplimit = float(tempPose[i]) <= Target[i] + tol
+				downlimit = float(tempPose[i]) >= Target[i] - tol
+				verificador = uplimit and downlimit and verificador
 		return verificador
 
 	def Compare(self, position):
