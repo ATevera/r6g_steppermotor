@@ -153,5 +153,5 @@ if __name__ == '__main__':
 	try:
 		Detector()
 	except rospy.ROSInterruptException:
-		pass
+		cv.destroyAllWindows()
         
