@@ -138,7 +138,7 @@ def Detector():
 					cv.putText(masksalida, '{},{}'.format(x_mm,y_mm),(x+30,y+30), font, 0.75,(0,255,0),1,cv.LINE_AA)
 					cv.drawContours(masksalida,contornos[i],-1,(0,255,0),6)
 			pieza.x = x_mm
-			pieza.y = y_mm
+			pieza.y = y_mm + 10
 			pub.publish(pieza)
 			cv.imshow('Real',masksalida)
 			cv.imshow('Mask',mask)
