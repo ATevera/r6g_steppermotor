@@ -99,7 +99,9 @@ def Detector():
 	offset_y = 120
 	
 	#Altura pieza a detectar
-	pieza.altura = 10
+	pieza.camaraFrame = [0.0, 0.0, 10.0]
+	pieza.posicion = [0.0]*3
+	pieza.orientacion = [0.0, 1.0, 0.0, 0.0]
 
 	while not rospy.is_shutdown():
 		ret, frame = cap.read()
@@ -138,17 +140,17 @@ def Detector():
 					x = int(M["m10"]/M["m00"])
 					y = int(M['m01']/M['m00'])
 					#Coordenada relativa en mm, intercambio de coordanadas para coincidencia con el marco de referencia del robot.
-					y_mm = int(x * workspace[1]/perspectiva_x)
-					x_mm = int(y * workspace[0]/perspectiva_y)
+					y_mm = float(x * workspace[1]/perspectiva_x)
+					x_mm = float(y * workspace[0]/perspectiva_y)
 					cv.circle(masksalida, (x,y), 7, (0,255,0), -1)
 					font = cv.FONT_HERSHEY_SIMPLEX
-					cv.putText(masksalida, '{},{}'.format(x_mm,y_mm),(x+30,y+30), font, 0.75,(0,255,0),1,cv.LINE_AA)
+					cv.putText(masksalida, '{},{}'.format(int(x_mm),int(y_mm)),(x+30,y+30), font, 0.75,(0,255,0),1,cv.LINE_AA)
 					cv.drawContours(masksalida,contornos[i],-1,(0,255,0),6)
-			pieza.x = x_mm
-			pieza.y = y_mm + 10
-			pieza.r6g_x = pieza.x + offset_x
-			pieza.r6g_y = pieza.y - offset_y
-			pieza.r6g_z = pieza.altura - 10
+			pieza.camaraFrame[0] = x_mm
+			pieza.camaraFrame[1] = y_mm + 10
+			pieza.posicion[0] = pieza.x + offset_x
+			pieza.posición[1] = pieza.y - offset_y
+			pieza.posición[2] = pieza.altura - 10
 			pub.publish(pieza)
 			cv.imshow('Real',masksalida)
 			cv.imshow('Mask',mask)
