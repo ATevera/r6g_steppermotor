@@ -132,7 +132,7 @@ void MoveJ(float *FlagAngles, bool EndEffector)
   Steps[1] = DoF2.DegreesToSteps(FlagAngles[1]);
   Steps[2] = DoF3.DegreesToSteps(FlagAngles[2]);
   Steps[3] = DoF4.DegreesToSteps(FlagAngles[3]);
-  Steps[4] = DoF5.DegreesToSteps(FlagAngles[4]);
+  Steps[4] = DoF5.DegreesToSteps(FlagAngles[4]) + 2;
   Steps[5] = DoF6.DegreesToSteps(FlagAngles[5]);
 
   //Cálculo del máximo número de pasos.
