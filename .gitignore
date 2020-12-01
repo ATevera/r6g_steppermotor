@@ -1,3 +1,5 @@
 .vscode/
 Microcontroladores/BootEsp32/.vscode/
 datapoints/
+src/__pycache__
+.setup_assistant

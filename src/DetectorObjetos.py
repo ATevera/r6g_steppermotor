@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import rospy
+import rospy, sys
 import cv2 as cv
 import numpy as np
 from r6g_steppermotor.msg import Coordenadas
+from r6gPoints import PointData
 
 
 #creación de trackbars
@@ -90,26 +91,32 @@ def Detector():
 	#iniciar camara
 	cap = cv.VideoCapture(0)
 	makeTrackBars()
+	pose = PointData(sys.argv[1])
+	pose_revision = [0.0, 0.0, 0.0, 0.0, 90.0, 0.0]
+
+	#Offset entre frame world y frame cámara
+	offset_x = 185
+	offset_y = 120
+	
+	#Altura pieza a detectar
+	pieza.altura = 10
 
 	while not rospy.is_shutdown():
 		ret, frame = cap.read()
 		#guardando la posición de los trackbars en variables
 		hl, sl, vl, hh, sh, vh, a, blur = readTrackBars()
-
 		#creando imagenes con la posición de los trackbars
 		img1_hsv[:] = [hl,sl,vl]
 		img2_hsv[:] = [hh,sh,vh]
 		img1 = cv.cvtColor(img1_hsv, cv.COLOR_HSV2BGR)
 		img2 = cv.cvtColor(img2_hsv, cv.COLOR_HSV2BGR)
-
 		#Creación de los array con los limites HSV obtenidos de los trackbars
 		rango_l = np.array([hl,sl,vl])
 		rango_h = np.array([hh,sh,vh])
-
 		#Proceso de transferencia de Perspectiva
 		enfoque_ws = roi(frame, ancho = perspectiva_y, alto = perspectiva_x)
 
-		if enfoque_ws is not None:
+		if enfoque_ws is not None and pose.Checking(pose_revision, 2.0):
 			framehsv = cv.cvtColor(enfoque_ws, cv.COLOR_BGR2HSV)
 			mask = cv.inRange(framehsv,rango_l,rango_h)
 			blur = 2*blur +1
@@ -138,12 +145,15 @@ def Detector():
 					cv.putText(masksalida, '{},{}'.format(x_mm,y_mm),(x+30,y+30), font, 0.75,(0,255,0),1,cv.LINE_AA)
 					cv.drawContours(masksalida,contornos[i],-1,(0,255,0),6)
 			pieza.x = x_mm
-			pieza.y = y_mm
+			pieza.y = y_mm + 10
+			pieza.r6g_x = pieza.x + offset_x
+			pieza.r6g_y = pieza.y - offset_y
+			pieza.r6g_z = pieza.altura - 10
 			pub.publish(pieza)
 			cv.imshow('Real',masksalida)
 			cv.imshow('Mask',mask)
-		cv.imshow('frame', frame)
 		if cv.waitKey(1) & 0xFF == ord('q') : break
+		cv.imshow('frame', frame)
 		cv.imshow('Color a detectar minimos',img1)
 		cv.imshow('Color a detectar maximos',img2)
 	cap.release()
@@ -153,5 +163,6 @@ if __name__ == '__main__':
 	try:
 		Detector()
 	except rospy.ROSInterruptException:
-		pass
+		cap.release()
+		cv.destroyAllWindows()
         

@@ -42,6 +42,14 @@
         <joint name="Joint5" value="0"/>
         <joint name="Joint6" value="0"/>
     </group_state>
+    <group_state name="reconocimiento" group="r6g_um">
+        <joint name="Joint1" value="0"/>
+        <joint name="Joint2" value="0"/>
+        <joint name="Joint3" value="0"/>
+        <joint name="Joint4" value="0"/>
+        <joint name="Joint5" value="1.57079633"/>
+        <joint name="Joint6" value="0"/>
+    </group_state>
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="vFixed" type="fixed" parent_frame="world" child_link="Base"/>
     <virtual_joint name="vJoint1" type="planar" parent_frame="Base" child_link="Eslabon1"/>
