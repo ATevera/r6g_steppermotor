@@ -94,6 +94,13 @@ def Detector():
 	pose = PointData(sys.argv[1])
 	pose_revision = [0.0, 0.0, 0.0, 0.0, 90.0, 0.0]
 
+	#Offset entre frame world y frame cámara
+	offset_x = 185
+	offset_y = 120
+	
+	#Altura pieza a detectar
+	pieza.altura = 10
+
 	while not rospy.is_shutdown():
 		ret, frame = cap.read()
 		#guardando la posición de los trackbars en variables
@@ -139,11 +146,14 @@ def Detector():
 					cv.drawContours(masksalida,contornos[i],-1,(0,255,0),6)
 			pieza.x = x_mm
 			pieza.y = y_mm + 10
+			pieza.r6g_x = pieza.x + offset_x
+			pieza.r6g_y = pieza.y - offset_y
+			pieza.r6g_z = pieza.altura - 10
 			pub.publish(pieza)
 			cv.imshow('Real',masksalida)
 			cv.imshow('Mask',mask)
-		cv.imshow('frame', frame)
 		if cv.waitKey(1) & 0xFF == ord('q') : break
+		cv.imshow('frame', frame)
 		cv.imshow('Color a detectar minimos',img1)
 		cv.imshow('Color a detectar maximos',img2)
 	cap.release()
@@ -153,5 +163,6 @@ if __name__ == '__main__':
 	try:
 		Detector()
 	except rospy.ROSInterruptException:
+		cap.release()
 		cv.destroyAllWindows()
         
