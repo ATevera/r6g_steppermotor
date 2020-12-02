@@ -2,7 +2,7 @@
 import rospy, sys
 import cv2 as cv
 import numpy as np
-from r6g_steppermotor.msg import Coordenadas
+from r6g_steppermotor.msg import TargetPose
 from r6gPoints import PointData
 
 
@@ -85,9 +85,9 @@ perspectiva_x = int(perspectiva_y/aspect_ratio)
 def Detector():
 	"""Inicialización de nodo y construcción de tipo de mensaje"""
 	rospy.init_node('Detector',anonymous = True)
-	pub = rospy.Publisher('Coordenadas', Coordenadas, queue_size = 100)
+	pub = rospy.Publisher('TargetPose', TargetPose, queue_size = 100)
 	rate = rospy.Rate(5) #Frecuencia de publicación
-	pieza = Coordenadas()
+	pieza = TargetPose()
 	#iniciar camara
 	cap = cv.VideoCapture(0)
 	makeTrackBars()
@@ -101,7 +101,7 @@ def Detector():
 	#Altura pieza a detectar
 	pieza.camaraFrame = [0.0, 0.0, 10.0]
 	pieza.posicion = [0.0]*3
-	pieza.orientacion = [0.0, 1.0, 0.0, 0.0]
+	pieza.orientacion = [-3.799e-06, 1.0, -3.40596e-05, 1.39966e-05]
 
 	while not rospy.is_shutdown():
 		ret, frame = cap.read()
@@ -118,7 +118,7 @@ def Detector():
 		#Proceso de transferencia de Perspectiva
 		enfoque_ws = roi(frame, ancho = perspectiva_y, alto = perspectiva_x)
 
-		if enfoque_ws is not None and pose.Checking(pose_revision, 2.0):
+		if enfoque_ws is not None and pose.Checking(pose_revision, 5):
 			framehsv = cv.cvtColor(enfoque_ws, cv.COLOR_BGR2HSV)
 			mask = cv.inRange(framehsv,rango_l,rango_h)
 			blur = 2*blur +1
@@ -146,18 +146,18 @@ def Detector():
 					font = cv.FONT_HERSHEY_SIMPLEX
 					cv.putText(masksalida, '{},{}'.format(int(x_mm),int(y_mm)),(x+30,y+30), font, 0.75,(0,255,0),1,cv.LINE_AA)
 					cv.drawContours(masksalida,contornos[i],-1,(0,255,0),6)
-			pieza.camaraFrame[0] = x_mm
-			pieza.camaraFrame[1] = y_mm + 10
-			pieza.posicion[0] = pieza.x + offset_x
-			pieza.posición[1] = pieza.y - offset_y
-			pieza.posición[2] = pieza.altura - 10
+			pieza.camaraFrame[0] = round(x_mm, 4)
+			pieza.camaraFrame[1] = round(y_mm + 10, 4)
+			pieza.posicion[0] = round(x_mm + offset_x, 4)
+			pieza.posicion[1] = round(y_mm - offset_y, 4)
+			pieza.posicion[2] = round(pieza.camaraFrame[2] - 10, 4)
 			pub.publish(pieza)
 			cv.imshow('Real',masksalida)
-			cv.imshow('Mask',mask)
+			#cv.imshow('Mask',mask)
 		if cv.waitKey(1) & 0xFF == ord('q') : break
 		cv.imshow('frame', frame)
-		cv.imshow('Color a detectar minimos',img1)
-		cv.imshow('Color a detectar maximos',img2)
+		#cv.imshow('Color a detectar minimos',img1)
+		#cv.imshow('Color a detectar maximos',img2)
 	cap.release()
 	cv.destroyAllWindows()    
 
